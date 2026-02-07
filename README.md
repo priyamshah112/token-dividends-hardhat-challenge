@@ -33,10 +33,31 @@ Your Solution must pass the test: `npm run test` - run the tests (Hardhat)
 
 ![Test Result](./test-result.png)
 
-### 3: Submission
+## Solution Summary
 
-Record a short [Loom video](https://www.loom.com) showing how it works, including the expected and actual behavior if you're testing.
+This repository contains a Solidity/Hardhat technical assessment implementing a simple ETH-backed ERC20-like token with dividend distribution.
 
-### 4. Deadline
+### What the contract does
+- **Mint:** Users call `mint()` and send ETH. They receive an equal amount of tokens (1 token unit per wei).
+- **Burn:** Users call `burn(dest)` to burn their entire token balance and receive the same amount of ETH sent to `dest`.
+- **Transfers:** Supports `transfer` and `transferFrom` with allowances.
+- **Holders list:** Maintains an on-chain list of current token holders (addresses with non-zero balances).
+- **Dividends:** `recordDividend()` accepts ETH and splits it proportionally across current holders based on balances at the time of recording. Each user accumulates a withdrawable dividend amount.
+- **Withdrawals:** `withdrawDividend(dest)` allows a user to withdraw their accumulated dividends even if they no longer hold tokens.
 
-Please complete and submit the result within 1 ~ 2 hours unless otherwise discussed.
+### What was missing
+The provided `Token.sol` was a stub: core ERC20 functions, mint/burn logic, holder tracking, and dividend accounting were not implemented (functions reverted).
+
+### What I implemented (in Token.sol only)
+- ERC20 allowances (`approve`, `allowance`, `transferFrom`)
+- Balance transfers with SafeMath
+- `mint()` and `burn()` with correct ETH<->token accounting
+- O(1) holder tracking using an array + 1-based index mapping with swap-and-pop removal
+- Dividend recording proportional to balances at record time and stored as withdrawable per holder
+- Dividend withdrawals using checks-effects-interactions to prevent re-entrancy issues
+
+### How to run
+```bash
+npm install
+npm run compile
+npm test
